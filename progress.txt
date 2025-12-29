@@ -1,0 +1,6 @@
+fatto algoritmo kmeans
+scaricato un datasest
+
+provare clustering su nuovo dataset
+
+assegnamento centroidi iniziali
