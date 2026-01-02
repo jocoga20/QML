@@ -7,7 +7,7 @@ from utils import potential
 
 d = 2
 n = 1000
-k = 4
+k = 3
 
 def normal(mean, num):
     return np.random.multivariate_normal(mean=mean, cov=np.identity(d) * 0.1, size=num)
