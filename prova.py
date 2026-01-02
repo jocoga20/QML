@@ -1,22 +1,31 @@
 from kmeans import kmeans, compute_centroids
 import numpy as np
 from plot import plot2d
+from utils import potential
 
 #print(kmeans(np.ones((100, 3)), np.ones((5, 3)), 1_000))
 
 d = 2
 n = 1000
-k = 4
+k = 3
 
-vectors = np.random.multivariate_normal(mean=np.zeros(d), cov=np.identity(d), size=n)
+def normal(mean, num):
+    return np.random.multivariate_normal(mean=mean, cov=np.identity(d) * 100, size=num)
+
+vectors = np.concat([
+    normal(np.zeros(d), int(n/3)),
+    normal(np.ones(d) * 3, int(n/3)),
+    normal(np.ones(d) * -3, n - 2 * int(n/3))
+], axis=0)
+
 labels = np.array([i % k for i in range(n)])
 centroids = compute_centroids(vectors, labels, k)
-iterations = 2
 
-plot2d(vectors, labels, k)
+p = potential(vectors, centroids, labels)
+plot2d(vectors, labels, centroids, k, title=f'it=0, p={p}')
 
-print(labels.shape, centroids.shape)
-for k in range(1):
-    labels, centroids = kmeans(vectors, centroids)
-    print(labels)
-    print(centroids)
+for it in range(1, 100):
+    labels, centroids = kmeans(vectors, centroids, labels)
+    p = potential(vectors, centroids, labels)
+    plot2d(vectors, labels, centroids, k, title=f'it={it}, p={p}')
+    
