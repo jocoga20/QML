@@ -1,4 +1,4 @@
-from kmeans import kmeans, compute_centroids
+from kmeans import assign_labels, kmeans, kmeanspp_init_centroids, update_centroids
 import numpy as np
 from plot import plot2d
 from utils import potential
@@ -19,8 +19,14 @@ vectors = np.concat([
 ], axis=0)
 
 labels = np.array([i % k for i in range(n)])
-centroids = compute_centroids(vectors, labels, k)
+centroids = update_centroids(vectors, labels, k)
+plot2d(vectors, labels, centroids, k, title='0')
 
+centroids = kmeanspp_init_centroids(vectors, k)
+labels = assign_labels(vectors, centroids)
+plot2d(vectors, labels, centroids, k, title='1')
+
+"""
 p = potential(vectors, centroids, labels)
 plot2d(vectors, labels, centroids, k, title=f'it=0, p={p}')
 
@@ -28,4 +34,4 @@ for it in range(1, 100):
     labels, centroids = kmeans(vectors, centroids, labels)
     p = potential(vectors, centroids, labels)
     plot2d(vectors, labels, centroids, k, title=f'it={it}, p={p}')
-    
+    """

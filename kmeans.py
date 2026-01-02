@@ -1,18 +1,31 @@
 import numpy as np
-from time import sleep
-from plot import plot2d
 from random import randint
 
-def labeling(vectors, centroids):
+
+def assign_labels(vectors, centroids):
     return np.array([np.linalg.norm(centroids - v, axis=1).argmin() for v in vectors])
 
-def compute_centroids(vectors, labels, k):
+def update_centroids(vectors, labels, k):
     return np.array([vectors[labels==label].mean(axis=0) for label in range(k)])
+
+def min_distance(vector, centroids):
+    return np.linalg.norm(vector - centroids, axis=1).min()
+
+def nearest_centroid_distances(vectors, centroids):
+    return np.array([min_distance(v, centroids) for v in vectors])
 
 def kmeanspp_init_centroids(vectors, k):
     i = randint(0, vectors.shape[0]-1)
-    c0 = vectors[i]
-    
+    centroids = [vectors[i]]
+
+    for _ in range(k-1):
+        distances = nearest_centroid_distances(vectors, centroids)
+        distances **= 2
+        softmax_norm = np.sum(distances)
+        distances /= softmax_norm
+        i = np.random.choice(len(distances), p=distances)
+        centroids.append(vectors[i])
+    return np.array(centroids)
 
 def kmeans(vectors, centroids, labels, iterations=1, threshold=float('-inf')):
     """
@@ -28,8 +41,8 @@ def kmeans(vectors, centroids, labels, iterations=1, threshold=float('-inf')):
     threshold *= k
     
     for _ in range(iterations):
-        labels = labeling(vectors, centroids)
-        new_centroids = compute_centroids(vectors, labels, k)
+        labels = assign_labels(vectors, centroids)
+        new_centroids = update_centroids(vectors, labels, k)
         if np.linalg.norm(new_centroids - centroids, axis=1).sum() <= threshold:
             break
         centroids = new_centroids
