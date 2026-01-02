@@ -7,10 +7,10 @@ from utils import potential
 
 d = 2
 n = 1000
-k = 3
+k = 4
 
 def normal(mean, num):
-    return np.random.multivariate_normal(mean=mean, cov=np.identity(d) * 100, size=num)
+    return np.random.multivariate_normal(mean=mean, cov=np.identity(d) * 0.1, size=num)
 
 vectors = np.concat([
     normal(np.zeros(d), int(n/3)),
