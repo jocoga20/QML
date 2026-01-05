@@ -6,7 +6,7 @@ class DeltaKMeans(KMeans):
     def __init__(self, delta, seed=42):
         super().__init__()
         self.delta = delta
-        self.seed = seed
+        np.random.seed(seed)
     
     def assign_label(self, vector, centroids):
         k = centroids.shape[0]
@@ -35,5 +35,4 @@ class DeltaKMeans(KMeans):
     
     def update_centroids(self, vectors, labels, k):
         d = vectors.shape[1]
-        return super().update_centroids(vectors, labels, k) + self.delta / (2 * d)
-    
+        return super().update_centroids(vectors, labels, k) + np.random.normal(size=(k, d)) * self.delta / (2 * d)
