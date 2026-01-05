@@ -5,4 +5,11 @@ def vector_potential(vector, centroid):
     return np.dot(m.T, m)
 
 def potential(vectors, centroids, labels):
-    return sum([vector_potential(vectors[i], centroids[labels[i]]) for i in range(vectors.shape[0])])
+    s = 0.
+    for i in range(vectors.shape[0]):
+        v = vectors[i]
+        l = labels[i]
+        c = centroids[l]
+        m = v - c
+        s += np.dot(m.T, m)
+    return s
