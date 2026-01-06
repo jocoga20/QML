@@ -52,21 +52,3 @@ class KMeans:
             centroids = new_centroids
 
         return labels, new_centroids
-
-n = 100
-d = 2
-k = 5
-
-vectors = np.random.normal(size=(n, d))
-labels = np.zeros(shape=n)
-
-#np.random.seed(42)
-
-km = KMeans()
-centroids = km.kmeanspp_init(vectors, k)
-
-plot2d(vectors, labels, centroids, k, f'it = -1')
-
-for it in range(10):
-    labels, centroids = km.run(vectors, centroids, labels, threshold=1e-10, iterations=10)
-    plot2d(vectors, labels, centroids, k, f'it = {it}')
