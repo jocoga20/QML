@@ -1,19 +1,31 @@
 import numpy as np
 
-np.random.seed(42)
+from plot import plot2d
+from utils import potential
 
 class KMeans:
-    def get_probs(vectors, centroids):
-        
+    def get_sqrd_shortest_dist(self, vector, centroids):
+        sqrd_dist = (centroids - vector) ** 2
+        return sqrd_dist.sum(axis=1).min()
+    
+    def get_probs(self, vectors, centroids):
+        sqrd_dists = np.array([self.get_sqrd_shortest_dist(v, centroids) for v in vectors]).astype('float64')
+        return sqrd_dists / sqrd_dists.sum()
+
+    def choose_new_index(self, vectors, centroids):
+        n = vectors.shape[0]
+        return np.random.choice(n, p=self.get_probs(vectors, centroids))
 
     def kmeanspp_init(self, vectors, k):
         n = vectors.shape[0]
         i = np.random.choice(n)
         centroids = [vectors[i]]
         
-        for i in range(k-1):
-            self.get_probs(vectors, centroids)
-    
+        for _ in range(k-1):
+            i = self.choose_new_index(vectors, centroids)
+            centroids.append(vectors[i])
+        return np.array(centroids)
+
     def assign_labels(self, vectors, centroids):
         return np.array([np.linalg.norm(centroids - v, axis=1).argmin() for v in vectors])
     
@@ -41,6 +53,20 @@ class KMeans:
 
         return labels, new_centroids
 
+n = 100
+d = 2
+k = 5
+
+vectors = np.random.normal(size=(n, d))
+labels = np.zeros(shape=n)
+
+#np.random.seed(42)
+
 km = KMeans()
-x = km.kmeanspp_init(np.array([[0,0], [1,1], [2,2]]))
-print(x)
+centroids = km.kmeanspp_init(vectors, k)
+
+plot2d(vectors, labels, centroids, k, f'it = -1')
+
+for it in range(10):
+    labels, centroids = km.run(vectors, centroids, labels, threshold=1e-10, iterations=10)
+    plot2d(vectors, labels, centroids, k, f'it = {it}')

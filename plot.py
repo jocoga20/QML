@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 plt.ion()
 fig, ax = plt.subplots()
 
-def plot2d(vectors, labels, centroids, k, title):
+def plot2d(vectors, labels, centroids, k, title, wait_time=1):
     ax.clear()
     for label in range(k):
         x, y = vectors[labels == label].T
@@ -11,7 +11,7 @@ def plot2d(vectors, labels, centroids, k, title):
         plt.scatter(x, y, s=100, label=f'c({label})')
     plt.title(title)
     plt.legend()
-    plt.pause(1)
+    plt.pause(wait_time)
 """
     ax = plt.gca()
     ax.set_aspect('equal', 'datalim')
