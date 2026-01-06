@@ -1,7 +1,5 @@
 import numpy as np
 
-from utils import potential
-
 class KMeans:
     def get_sqrd_shortest_dist(self, vector, centroids):
         sqrd_dist = (centroids - vector) ** 2
@@ -46,7 +44,6 @@ class KMeans:
         for _ in range(iterations):
             labels = self.assign_labels(vectors, centroids)
             new_centroids = self.update_centroids(vectors, labels, k)
-            print(potential(vectors, new_centroids, labels))
             if np.linalg.norm(new_centroids - centroids, axis=1).sum() <= threshold:
                 break
             centroids = new_centroids
