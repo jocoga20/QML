@@ -1,8 +1,18 @@
 import numpy as np
 
+np.random.seed(42)
+
 class KMeans:
-    def kmeanspp_init(self):
-        pass
+    def get_probs(vectors, centroids):
+        
+
+    def kmeanspp_init(self, vectors, k):
+        n = vectors.shape[0]
+        i = np.random.choice(n)
+        centroids = [vectors[i]]
+        
+        for i in range(k-1):
+            self.get_probs(vectors, centroids)
     
     def assign_labels(self, vectors, centroids):
         return np.array([np.linalg.norm(centroids - v, axis=1).argmin() for v in vectors])
@@ -30,4 +40,7 @@ class KMeans:
             centroids = new_centroids
 
         return labels, new_centroids
-    
+
+km = KMeans()
+x = km.kmeanspp_init(np.array([[0,0], [1,1], [2,2]]))
+print(x)
