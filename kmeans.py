@@ -29,7 +29,7 @@ class KMeans:
     def update_centroids(self, vectors, labels, k):
         return np.array([vectors[labels==label].mean(axis=0) for label in range(k)])
 
-    def run(self, vectors, centroids, labels, iterations=1, threshold=float('-inf')):
+    def run(self, vectors, centroids, labels, max_it=1, threshold=float('-inf')):
         """
         :param vectors: n x d n = instances, d = feature size
         :param centroids: k x d, k = num of different labels (given)
@@ -41,11 +41,13 @@ class KMeans:
         k = centroids.shape[0]
         threshold *= k
         
-        for _ in range(iterations):
+        for it in range(max_it):
             labels = self.assign_labels(vectors, centroids)
             new_centroids = self.update_centroids(vectors, labels, k)
-            if np.linalg.norm(new_centroids - centroids, axis=1).sum() <= threshold:
+            if it % 10 == 0:
+                print(it)
+            if np.linalg.norm(new_centroids - centroids, axis=1).sum() < threshold:
                 break
             centroids = new_centroids
-
+        
         return labels, new_centroids

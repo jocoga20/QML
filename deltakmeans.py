@@ -17,7 +17,6 @@ class DeltaKMeans(KMeans):
         for i in range(k):
             d = np.linalg.norm(vector - centroids[i])
             distances.append(d)
-            print(d)
 
             if d > d_min + self.delta:
                 continue
@@ -31,7 +30,7 @@ class DeltaKMeans(KMeans):
         return choice(filtered_centroids)
 
     def assign_labels(self, vectors, centroids):
-        return np.array([self.assign_label(v, centroids, self.delta) for v in vectors])
+        return np.array([self.assign_label(v, centroids) for v in vectors])
     
     def update_centroids(self, vectors, labels, k):
         d = vectors.shape[1]
