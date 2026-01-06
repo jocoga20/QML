@@ -1,6 +1,5 @@
 import numpy as np
 
-from plot import plot2d
 from utils import potential
 
 class KMeans:
@@ -47,6 +46,7 @@ class KMeans:
         for _ in range(iterations):
             labels = self.assign_labels(vectors, centroids)
             new_centroids = self.update_centroids(vectors, labels, k)
+            print(potential(vectors, new_centroids, labels))
             if np.linalg.norm(new_centroids - centroids, axis=1).sum() <= threshold:
                 break
             centroids = new_centroids
