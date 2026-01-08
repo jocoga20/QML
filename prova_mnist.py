@@ -3,49 +3,46 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from torchvision import transforms, datasets
 from deltakmeans import DeltaKMeans
-from kmeans import KMeans
-import time
 
-def get_mnist():
-    m = datasets.MNIST('./data', train=True, transform=transforms.ToTensor(), download=True)
+def get_mnist(train):
+    m = datasets.MNIST('./data', train=train, transform=transforms.ToTensor(), download=True)
     return m.data.numpy().reshape(-1, 784), m.targets.numpy()
 
-X, y = get_mnist()
+X_tr, y_tr = get_mnist(True)
+X_ts, y_ts = get_mnist(False)
 
 scaler = StandardScaler()
-X = scaler.fit_transform(X)
+X_tr = scaler.fit_transform(X_tr)
+X_ts = scaler.transform(X_ts)
+
 d = 40
 pca = PCA(d)
+X_tr = pca.fit_transform(X_tr)
+X_ts = pca.transform(X_ts)
 
-pca.fit(X)
-X = pca.transform(X)
-
-print(X.shape)
-print(pca.explained_variance_ratio_.sum())
-
-k = 320
-n = 60_000
+k = 10
 
 km = DeltaKMeans(delta=.5)
-c = km.kmeanspp_init(vectors=X, k=k)
-t0 = time.time()
+c = km.kmeanspp_init(vectors=X_tr, k=k)
 
-labels, centroids = km.run(vectors=X, centroids=c, labels=np.zeros(n), max_it=100, threshold=1e-4)
+labels, centroids = km.run(vectors=X_tr, centroids=c, labels=np.zeros(shape=X_tr.shape[0]), max_it=100, threshold=1e-4)
 
 def get_centroids_majority_class(labels, y, k):
     return [np.bincount(y[labels == i]).argmax() for i in range(k)]
 
-majority_class_by_centroid = get_centroids_majority_class(labels, y, k)
+def nearest_centroid_index(vector, centroids):
+    return np.linalg.norm(centroids - vector, axis=1).argmin()
+
+majority_class_by_centroid = get_centroids_majority_class(labels, y_tr, k)
 
 accuracy = 0.
+preds = []
+for x in X_ts:
+    i = nearest_centroid_index(x, centroids)
+    pred = majority_class_by_centroid[i]
+    preds.append(pred)
 
-for i in range(n):
-    centroid_index = labels[i]
-    majority_class = majority_class_by_centroid[centroid_index]
-    if majority_class == y[i]:
-        accuracy += 1
+preds = np.array(preds)
+accuracy = (preds == y_ts).sum() / X_ts.shape[0]
 
-accuracy /= 60_000
 print(accuracy)
-t1 = time.time()
-print(f't: {t1 - t0}')
