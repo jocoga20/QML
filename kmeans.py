@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 
 class KMeans:
     def get_sqrd_shortest_dist(self, vector, centroids):
@@ -18,16 +19,16 @@ class KMeans:
         i = np.random.choice(n)
         centroids = [vectors[i]]
         
-        for _ in range(k-1):
+        for _ in tqdm(range(k-1)):
             i = self.choose_new_index(vectors, centroids)
             centroids.append(vectors[i])
         return np.array(centroids)
 
     def assign_labels(self, vectors, centroids):
-        return np.array([np.linalg.norm(centroids - v, axis=1).argmin() for v in vectors])
+        return np.array([np.linalg.norm(centroids - v, axis=1).argmin() for v in tqdm(vectors)])
     
     def update_centroids(self, vectors, labels, k):
-        return np.array([vectors[labels==label].mean(axis=0) for label in range(k)])
+        return np.array([vectors[labels==label].mean(axis=0) for label in tqdm(range(k))])
 
     def run(self, vectors, centroids, labels, max_it=1, threshold=float('-inf')):
         """
@@ -44,8 +45,6 @@ class KMeans:
         for it in range(max_it):
             labels = self.assign_labels(vectors, centroids)
             new_centroids = self.update_centroids(vectors, labels, k)
-            if it % 10 == 0:
-                print(it)
             if np.linalg.norm(new_centroids - centroids, axis=1).sum() < threshold:
                 break
             centroids = new_centroids
