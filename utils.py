@@ -14,6 +14,20 @@ def potential(vectors, centroids, labels):
         s += np.dot(m.T, m)
     return s
 
-def accuracy(X, y, centroids):
-    preds = np.array([majority_class_by_centroid[nearest_centroid_index(x, centroids)] for x in X])
-    return (preds == y).sum() / X.shape[0]
+def centroid_index_to_majority_class(i, labels, y_true):
+    return np.bincount(y_true[labels == i]).argmax()
+
+def compute_centroids_classes(k, labels, y_true):
+    return [centroid_index_to_majority_class(i, labels, y_true) for i in range(k)]
+
+def nearest_centroid_index(vector, centroids):
+    m = centroids - vector
+    m **= 2
+    m.sum(axis=1)
+    return m.argmin()
+
+def vectors_to_class(vectors, centroids, centroid_index_to_class):
+    return np.array([centroid_index_to_class[nearest_centroid_index(v, centroids)] for v in vectors])
+
+def accuracy(y_pred, y_true):
+    return (y_pred == y_true).sum() / y_pred.shape[0]
