@@ -13,3 +13,7 @@ def potential(vectors, centroids, labels):
         m = v - c
         s += np.dot(m.T, m)
     return s
+
+def accuracy(X, y, centroids):
+    preds = np.array([majority_class_by_centroid[nearest_centroid_index(x, centroids)] for x in X])
+    return (preds == y).sum() / X.shape[0]
