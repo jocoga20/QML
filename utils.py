@@ -1,9 +1,5 @@
 import numpy as np
 
-def vector_potential(vector, centroid):
-    m = vector - centroid
-    return np.dot(m.T, m)
-
 def potential(vectors, centroids, labels):
     s = 0.
     for i in range(vectors.shape[0]):
@@ -23,8 +19,9 @@ def compute_centroids_classes(k, labels, y_true):
 def nearest_centroid_index(vector, centroids):
     m = centroids - vector
     m **= 2
-    m.sum(axis=1)
-    return m.argmin()
+    m = m.sum(axis=1)
+    m = m.argmin()
+    return m
 
 def vectors_to_class(vectors, centroids, centroid_index_to_class):
     return np.array([centroid_index_to_class[nearest_centroid_index(v, centroids)] for v in vectors])
