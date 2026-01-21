@@ -28,7 +28,7 @@ def run(kmeans, k, d):
     labels = np.zeros(shape=X_tr.shape)
 
     print('kmeans++ init')
-    init_centroids_path = f'inits/mnist.{d}.init.npy'
+    init_centroids_path = f'inits/mnist.k{k}.d{d}.init.npy'
 
     try:
         print('Loading kmeans++ init centroids')
@@ -40,7 +40,6 @@ def run(kmeans, k, d):
 
     print(kmeans.__class__)
     labels, centroids = kmeans.run(vectors=X_tr, centroids=centroids, labels=labels, max_it=100, threshold=1e-4)
-
     centroid_to_class = compute_centroids_classes(k, labels, y_tr)
     print('Mapping', centroid_to_class)
     y_pred_tr = np.array([centroid_to_class[l] for l in labels])
@@ -49,4 +48,5 @@ def run(kmeans, k, d):
     print(accuracy(y_pred_tr, y_tr))
     print(accuracy(y_pred_ts, y_ts))
 
-run(KMeans(), k=10, d=10)
+for k in range(3):
+    run(KMeans(), k=k*20, d=40)
