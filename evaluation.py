@@ -42,11 +42,11 @@ def run(kmeans, k, d):
     labels, centroids = kmeans.run(vectors=X_tr, centroids=centroids, labels=labels, max_it=100, threshold=1e-4)
 
     centroid_to_class = compute_centroids_classes(k, labels, y_tr)
-
+    print('Mapping', centroid_to_class)
     y_pred_tr = np.array([centroid_to_class[l] for l in labels])
     y_pred_ts = vectors_to_class(X_ts, centroids, centroid_to_class)
 
     print(accuracy(y_pred_tr, y_tr))
     print(accuracy(y_pred_ts, y_ts))
 
-run(KMeans(), k=20, d=10)
+run(KMeans(), k=10, d=10)

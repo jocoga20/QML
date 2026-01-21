@@ -11,7 +11,9 @@ def potential(vectors, centroids, labels):
     return s
 
 def centroid_index_to_majority_class(i, labels, y_true):
-    return np.bincount(y_true[labels == i]).argmax()
+    if all(labels != i):
+        return -1
+    return np.bincount(y_true[labels == i]).argmax().item()
 
 def compute_centroids_classes(k, labels, y_true):
     return [centroid_index_to_majority_class(i, labels, y_true) for i in range(k)]
