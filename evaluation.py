@@ -46,11 +46,3 @@ def run(kmeans, k, d):
     y_pred_ts = vectors_to_class(X_ts, centroids, centroid_to_class)
 
     return accuracy(y_pred_tr, y_tr), accuracy(y_pred_ts, y_ts)
-
-with open('results.txt', 'w') as f:
-    for delta in [0.1, 0.5]:
-        for k in [20, 40, 80]:
-            if delta == 0.1 and k == 20:
-                continue
-            tr_acc, ts_acc = run(DeltaKMeans(delta=delta), k=k, d=40)
-            f.write(f'- & {k} & {tr_acc} & {ts_acc}\\\n')
