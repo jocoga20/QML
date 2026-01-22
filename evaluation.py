@@ -41,12 +41,16 @@ def run(kmeans, k, d):
     print(kmeans.__class__)
     labels, centroids = kmeans.run(vectors=X_tr, centroids=centroids, labels=labels, max_it=100, threshold=1e-4)
     centroid_to_class = compute_centroids_classes(k, labels, y_tr)
-    print('Mapping', centroid_to_class)
+#    print('Mapping', centroid_to_class)
     y_pred_tr = np.array([centroid_to_class[l] for l in labels])
     y_pred_ts = vectors_to_class(X_ts, centroids, centroid_to_class)
 
-    print(accuracy(y_pred_tr, y_tr))
-    print(accuracy(y_pred_ts, y_ts))
+    return accuracy(y_pred_tr, y_tr), accuracy(y_pred_ts, y_ts)
 
-for k in range(3):
-    run(KMeans(), k=k*20, d=40)
+with open('results.txt', 'w') as f:
+    for delta in [0.1, 0.5]:
+        for k in [20, 40, 80]:
+            if delta == 0.1 and k == 20:
+                continue
+            tr_acc, ts_acc = run(DeltaKMeans(delta=delta), k=k, d=40)
+            f.write(f'- & {k} & {tr_acc} & {ts_acc}\\\n')

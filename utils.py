@@ -15,7 +15,7 @@ def centroid_index_to_majority_class(i, labels, y_true):
         return -1
     total = (labels == i).sum()
     bins = np.bincount(y_true[labels == i])
-    print(f'Purity of {i}: {bins.max() / total}')
+#    print(f'Purity of {i}: {bins.max() / total}')
     return bins.argmax().item()
 
 def compute_centroids_classes(k, labels, y_true):
